@@ -224,7 +224,7 @@ public class EmployeeService implements EmployeeServiceInterface {
 			new BusinessException("EMployee Id not found ", "Failed to ge employee Details");
 		}
 		// File name
-		String fileName = emp.getFirstName() + "_" + emp.getLastName() + "_" + file.getContentType();
+		String fileName = emp.getFirstName();// + "_" + emp.getLastName() + "_" + file.getContentType();
 		// Full path
 		String filePath = path + fileName;
 		// Setting path
@@ -266,13 +266,14 @@ public class EmployeeService implements EmployeeServiceInterface {
 			new BusinessException("Employee Id Not Found", "Please Enter Valid Id");
 		}
 
-		String fullPath = path + emp.getPhotoName();
+		String fullPath = path + File.separator + emp.getPhotoName();
 
-		InputStream is = null;
+		InputStream is=null;
 		try {
 			// DataBase logic to return inputstream
 			logger.info("EmployeeService : View Photo : Working Successfully ");
-			is = new FileInputStream(fullPath);
+			 is = new FileInputStream(fullPath);
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
