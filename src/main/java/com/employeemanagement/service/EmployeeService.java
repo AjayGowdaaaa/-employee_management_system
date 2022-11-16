@@ -26,6 +26,9 @@ public class EmployeeService implements EmployeeServiceInterface {
 
 	@Autowired
 	private EmployeeRepository employeeRepository;
+	
+	@Autowired
+	private EmployeeRepository employeeRepository1;
 
 	// ---------------------ADD
 	// EMPLOYEE-----------------------------------------------------
