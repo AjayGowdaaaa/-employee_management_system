@@ -208,10 +208,8 @@ public class EmployeeController {
 		exporter.employeePdfDownloadById(empId, response);
 	}
 
-	//@Value("${project.images}")
-
-	private String localPath = "C:\\Users\\ADevaraju\\Desktop\\Photos\\bin";
-	private String path = localPath;
+	@Value("${project.images}")
+	private String path;
 
 	/*
 	 * Adding Photo to existing Employee
