@@ -224,7 +224,7 @@ public class EmployeeService implements EmployeeServiceInterface {
 			new BusinessException("EMployee Id not found ", "Failed to ge employee Details");
 		}
 		// File name
-		String fileName = emp.getFirstName();// + "_" + emp.getLastName() + "_" + file.getContentType();
+		String fileName = emp.getFirstName();
 		// Full path
 		String filePath = path + fileName;
 		// Setting path
