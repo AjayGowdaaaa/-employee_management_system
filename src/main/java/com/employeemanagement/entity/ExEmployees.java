@@ -3,33 +3,20 @@ package com.employeemanagement.entity;
 import java.util.Arrays;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
-/*
- * Creating a Employee class with respective attributes
- * Using Lombak so that it will generate Getter and Setter for all the attributes
- * Note - empid is a primary key
- */
 @Schema
 @Entity
-public class Employee {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ExEmployees {
+	@Id	
 	private Long empId;
 	private String ESTUATE_ID;
-	@NotNull
 	private String firstName;
 	private String lastName;
-	
 	private String dateOfBirth;
-	@Email 
 	private String email;
 	private Long phone;
 //------------------------------------------------------------------------
@@ -38,9 +25,7 @@ public class Employee {
 	private String photoName;
 	private String photoPath;
 	
-	public Employee(){
-		
-	}
+	
 
 	public Long getEmpId() {
 		return empId;
@@ -89,7 +74,7 @@ public class Employee {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
+	
 	public Long getPhone() {
 		return phone;
 	}
@@ -129,6 +114,5 @@ public class Employee {
 				+ Arrays.toString(photo) + ", photoName=" + photoName + ", photoPath=" + photoPath + "]";
 	}
 
-	
 	
 }

@@ -10,14 +10,21 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import com.employeemanagement.entity.Employee;
+import com.employeemanagement.entity.ExEmployees;
 import com.employeemanagement.exception.BusinessException;
 import com.employeemanagement.repository.EmployeeRepository;
+import com.employeemanagement.repository.ExEmpRepo;
+
+
 
 
 @Service
@@ -27,7 +34,12 @@ public class EmployeeService implements EmployeeServiceInterface {
 
 	@Autowired
 	private EmployeeRepository employeeRepository;
+	@Autowired
+	private ExEmpRepo exEmpRepo;
+	@Qualifier("exEmpRepo")
+
 	
+
 
 	// ---------------------ADD
 	// EMPLOYEE-----------------------------------------------------
@@ -47,15 +59,13 @@ public class EmployeeService implements EmployeeServiceInterface {
 			logger.error(" EmployeeService/addEmployee : Employee Email Already EXsists  ");
 			throw new BusinessException("Email ID already Exists", "Entered Email Id already exsists in DataBase");
 		}
-			
+
 		if ((employeeRepository.findByPhone(savedEmployee.getPhone()) == null
 				&& employeeRepository.findByEmail(savedEmployee.getEmail()) == null)) {
 			try {
 				savedEmployee = employeeRepository.save(employee);
 				savedEmployee.setESTUATE_ID("EST-" + savedEmployee.getEmpId());
 				savedEmployee.setEmail(employee.getEmail().toLowerCase());
-				savedEmployee.setActive(true);
-				
 				savedEmployee = employeeRepository.save(employee);
 				return savedEmployee;
 			} catch (IllegalArgumentException e) {
@@ -74,36 +84,14 @@ public class EmployeeService implements EmployeeServiceInterface {
 
 	}
 	// ---------------------VIEW ALL 
-		// EMPLOYEE-----------------------------------------------------
-		@Override
-		public List<Employee> getAllEmployees() {
-			List<Employee> empoyeeList = null;
-
-			
-			try {
-				empoyeeList = employeeRepository.findAll();
-				logger.info("EmployeeService : getAllEmployees : Getting all the employee details ");
-			} catch (Exception e) {
-				logger.warn(" EmployeeService : Exception handled inside getAllEmployees Method  ");
-				throw new BusinessException("EmployeeService-getAllEmployees-2",
-						"Something went wrong in service layer while fetching all employee details " + e.getMessage());
-			}
-			if (empoyeeList.isEmpty()) {
-				logger.error(" EmployeeService : Employee List Empty  ");
-				throw new BusinessException("EmployeeService-getAllEmployees-1",
-						" List is Empty, Add Some Data in Register Page... ");
-			}
-			return empoyeeList;
-		}
-	// ---------------------VIEW ALL ACTIVE
 	// EMPLOYEE-----------------------------------------------------
 	@Override
-	public List<Employee> getAllActiveEmployees() {
+	public List<Employee> getAllEmployees() {
 		List<Employee> empoyeeList = null;
 
-		
+
 		try {
-			empoyeeList = employeeRepository.findByActive(true);
+			empoyeeList = employeeRepository.findAll();
 			logger.info("EmployeeService : getAllEmployees : Getting all the employee details ");
 		} catch (Exception e) {
 			logger.warn(" EmployeeService : Exception handled inside getAllEmployees Method  ");
@@ -117,14 +105,14 @@ public class EmployeeService implements EmployeeServiceInterface {
 		}
 		return empoyeeList;
 	}
-		
-		// ---------------------VIEW ALL Ex
-		// EMPLOYEE-----------------------------------------------------
+
+	// ---------------------VIEW ALL Ex
+	// EMPLOYEE-----------------------------------------------------
 	@Override
-	public List<Employee> getAllInActiveEmployees() {
-		List<Employee> empoyeeList = null;
+	public List<ExEmployees> getAllExEmployees() {
+		List<ExEmployees> empoyeeList = null;
 		try {
-			empoyeeList = employeeRepository.findByActive(false);
+			empoyeeList = exEmpRepo.findAll();
 			logger.info("EmployeeService : getAllEmployees : Getting all the employee details ");
 		} catch (Exception e) {
 			logger.warn(" EmployeeService : Exception handled inside getAllEmployees Method  ");
@@ -138,7 +126,8 @@ public class EmployeeService implements EmployeeServiceInterface {
 		}
 		return empoyeeList;
 	}
-	
+
+
 	// ---------------------UPDATE
 	// EMPLOYEE-----------------------------------------------------
 	@Override
@@ -199,83 +188,79 @@ public class EmployeeService implements EmployeeServiceInterface {
 	// ---------------------Resign 1 EMPLOYEE BY ID
 	// -----------------------------------------------------
 	@Override
-	public Employee resign(Long empId) {
+	public void resignEmployeeById(Long empId) {
 		if (!employeeRepository.existsById(empId)) {
 			logger.error(" EmployeeService : Employee ID Not Present  " + empId);
 			throw new BusinessException("EmployeeService-deleteEmployeeById-1",
 					" Employee ID Not found in DataBase, Please enter valid ID");
 		}
-		
-		Employee resigningEmp = employeeRepository.getById(empId);
-		try {
-			resigningEmp.setActive(false);
-			employeeRepository.save(resigningEmp);
-			logger.info("Inside the resign  method: resign ,Employee Id is sucessfully resign " + empId);
-		} catch (NoSuchElementException e) {
-			logger.warn(" EmployeeService : NoSuchElementException handled inside deleteEmployee Method  ");
-			throw new BusinessException("EmployeeService-updateEmployee-2",
-					"Employee ID Not found in DataBase, Please enter valid ID " + e.getMessage());
-		} catch (IllegalArgumentException e) {
-			logger.warn(" EmployeeService : IllegalArgumentException handled inside deleteEmployee Method  ");
-			throw new BusinessException("EmployeeService-updateEmployee-3",
-					"Something went wrong in service layer " + e.getMessage());
-		}
-		return resigningEmp;
-	}
-	
-	// ---------------------rejoin 1 EMPLOYEE BY ID
-		// -----------------------------------------------------
-	@Override
-		public Employee rejoin(Long empId) {
-			if (!employeeRepository.existsById(empId)) {
-				logger.error(" EmployeeService : Employee ID Not Present  " + empId);
-				throw new BusinessException("EmployeeService-deleteEmployeeById-1",
-						" Employee ID Not found in DataBase, Please enter valid ID");
-			}
-			
-			Employee resigningEmp = employeeRepository.getById(empId);
-			try {
-				resigningEmp.setActive(true);
-				employeeRepository.save(resigningEmp);
-				logger.info("Inside the resign  method: resign ,Employee Id is sucessfully resign " + empId);
-			} catch (NoSuchElementException e) {
-				logger.warn(" EmployeeService : NoSuchElementException handled inside deleteEmployee Method  ");
-				throw new BusinessException("EmployeeService-updateEmployee-2",
-						"Employee ID Not found in DataBase, Please enter valid ID " + e.getMessage());
-			} catch (IllegalArgumentException e) {
-				logger.warn(" EmployeeService : IllegalArgumentException handled inside deleteEmployee Method  ");
-				throw new BusinessException("EmployeeService-updateEmployee-3",
-						"Something went wrong in service layer " + e.getMessage());
-			}
-			return resigningEmp;
-		}
-	// ---------------------DELETE 1 EMPLOYEE BY ID
-		// 
-	@Override
-	public Employee deleteEmployeeById(Long empId) {
-		if (!employeeRepository.existsById(empId)) {
-			logger.error(" EmployeeService : Employee ID Not Present  " + empId);
-			throw new BusinessException("EmployeeService-deleteEmployeeById-1",
-					" Employee ID Not found in DataBase, Please enter valid ID");
-		}
-		
+
 		Employee deletingEmployee = employeeRepository.getById(empId);
+		ExEmployees emp = new ExEmployees();
 		try {
+			emp.setEmpId(deletingEmployee.getEmpId());
+			emp.setESTUATE_ID(deletingEmployee.getESTUATE_ID());
+			emp.setFirstName(deletingEmployee.getFirstName());
+			emp.setLastName(deletingEmployee.getLastName());
+			emp.setDateOfBirth(deletingEmployee.getDateOfBirth());
+			emp.setEmail(deletingEmployee.getEmail());
+			emp.setPhone(deletingEmployee.getPhone());
+			emp.setPhoto(deletingEmployee.getPhoto());
+			emp.setPhotoName(deletingEmployee.getPhotoName());
+			emp.setPhotoPath(deletingEmployee.getPhotoPath());
+
+			exEmpRepo.save(emp);
 			employeeRepository.delete(deletingEmployee);
-			employeeRepository.save(deletingEmployee);
-			logger.info("Inside the resign  method: resign ,Employee Id is sucessfully resign " + empId);
+
+			//logger.info("Inside the resign  method: resign ,Employee Id is sucessfully resign " + empId);
 		} catch (NoSuchElementException e) {
-			logger.warn(" EmployeeService : NoSuchElementException handled inside deleteEmployee Method  ");
+			//	logger.warn(" EmployeeService : NoSuchElementException handled inside deleteEmployee Method  ");
 			throw new BusinessException("EmployeeService-updateEmployee-2",
 					"Employee ID Not found in DataBase, Please enter valid ID " + e.getMessage());
 		} catch (IllegalArgumentException e) {
-			logger.warn(" EmployeeService : IllegalArgumentException handled inside deleteEmployee Method  ");
+			//	logger.warn(" EmployeeService : IllegalArgumentException handled inside deleteEmployee Method  ");
 			throw new BusinessException("EmployeeService-updateEmployee-3",
 					"Something went wrong in service layer " + e.getMessage());
 		}
-		return deletingEmployee;
+
 	}
-	
+	// ---------------------Rejoin 1 EMPLOYEE BY ID
+	@Override
+	public void rejoinEmployeeById(Long empId) {
+		if (!exEmpRepo.existsById(empId)) {
+			logger.error(" EmployeeService : Employee ID Not Present  " + empId);
+			throw new BusinessException("EmployeeService-deleteEmployeeById-1",
+					" Employee ID Not found in DataBase, Please enter valid ID");
+		}
+		ExEmployees rejoiningEmp = exEmpRepo.getById(empId);
+		Employee emp = new Employee();
+		try {
+			emp.setEmpId(rejoiningEmp.getEmpId());
+			emp.setESTUATE_ID(rejoiningEmp.getESTUATE_ID());
+			emp.setFirstName(rejoiningEmp.getFirstName());
+			emp.setLastName(rejoiningEmp.getLastName());
+			emp.setDateOfBirth(rejoiningEmp.getDateOfBirth());
+			emp.setEmail(rejoiningEmp.getEmail());
+			emp.setPhone(rejoiningEmp.getPhone());
+			emp.setPhoto(rejoiningEmp.getPhoto());
+			emp.setPhotoName(rejoiningEmp.getPhotoName());
+			emp.setPhotoPath(rejoiningEmp.getPhotoPath());
+
+
+			employeeRepository.save(emp);
+			exEmpRepo.delete(rejoiningEmp);
+			//logger.info("Inside the resign  method: resign ,Employee Id is sucessfully resign " + empId);
+		} catch (NoSuchElementException e) {
+			//	logger.warn(" EmployeeService : NoSuchElementException handled inside deleteEmployee Method  ");
+			throw new BusinessException("EmployeeService-updateEmployee-2",
+					"Employee ID Not found in DataBase, Please enter valid ID " + e.getMessage());
+		} catch (IllegalArgumentException e) {
+			//	logger.warn(" EmployeeService : IllegalArgumentException handled inside deleteEmployee Method  ");
+			throw new BusinessException("EmployeeService-updateEmployee-3",
+					"Something went wrong in service layer " + e.getMessage());
+		}
+
+	}
 	// ---------------------VIEW 1 EMPLOYEE BY
 	// PHONE-----------------------------------------------------
 	@Override
@@ -343,7 +328,7 @@ public class EmployeeService implements EmployeeServiceInterface {
 
 		// setting photo
 		try {
-			
+
 			emp.setPhoto(file.getBytes());
 		} catch (IOException e1) {
 			new BusinessException("Failed to add photo to Database ", "Error occured in Upload photo , setPhoto ");
@@ -376,13 +361,13 @@ public class EmployeeService implements EmployeeServiceInterface {
 			new BusinessException("Employee Id Not Found", "Please Enter Valid Id");
 		}
 
-		
+
 		String fullPath;
 		if (path== null) {
-			 
+
 		}
 		fullPath	= path + File.separator + emp.getPhotoName();
-		
+
 
 		InputStream is=null;
 		try {
@@ -393,11 +378,9 @@ public class EmployeeService implements EmployeeServiceInterface {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+
 		return is;
 
 	}
-	
-	
 
 }

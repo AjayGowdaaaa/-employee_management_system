@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.employeemanagement.entity.Employee;
+import com.employeemanagement.entity.ExEmployees;
 
 public interface EmployeeServiceInterface {
 
@@ -23,17 +24,11 @@ public interface EmployeeServiceInterface {
 	
 	List<Employee> getAllEmployees();
 	
-	List<Employee> getAllActiveEmployees();
+	List<ExEmployees> getAllExEmployees();
 	
-	List<Employee> getAllInActiveEmployees();
-
 	Employee getEmployeeById(Long empId);
 
-	Employee resign(Long empId);
-	
-	Employee rejoin(Long empId);
-	
-	Employee deleteEmployeeById(Long empId);
+	void resignEmployeeById(Long empId);
 
 	Employee updateEmployee(Long empId, Employee employee);
 
@@ -42,6 +37,8 @@ public interface EmployeeServiceInterface {
 	Employee getEmployeeByEmail(String email);
 	
 	Optional<Employee> findById(Long id);
+
+	void rejoinEmployeeById(Long empId);
 
 	
 }

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.employeemanagement.entity.Employee;
+import com.employeemanagement.entity.ExEmployees;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
@@ -16,9 +17,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 	Employee findByPhone(Long phone);
 	
 	Employee findByEmail(String email);
-	
-	List<Employee> findByActive(boolean active );
-	
 	
 //	@Modifying
 //	@Query("update Employee e set e.firstName = ?1, e.lastName = ?2, e.dateOfBirth= ?3, e.email=?4, e.phone=?5,e.photoPath=?6, where e.empId = ?7")
