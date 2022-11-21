@@ -43,11 +43,10 @@ import com.lowagie.text.DocumentException;
 @RestController
 @RequestMapping("/")
 public class EmployeeController {
+	
 	Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 	@Autowired
 	private EmployeeServiceInterface employeeServiceInterface;
-
-	ConcurrentMap<String, Employee> conMap = new ConcurrentHashMap<>();
 
 	/*
 	 * Register page there we can add employee details and storing in Employee
@@ -58,8 +57,8 @@ public class EmployeeController {
 	public ResponseEntity<?> addEmployee(@RequestBody Employee employee) {
 
 		try {
-			logger.info(" Controller Class/addEmployee method called	:	Registering new Employee Details ");
 			Employee savedEmployee = employeeServiceInterface.addEmployee(employee);
+			logger.info(" Controller Class/addEmployee method called	:	Registering new Employee Details ");
 			return new ResponseEntity<Employee>(savedEmployee, HttpStatus.CREATED);
 		} catch (BusinessException e) {
 			logger.warn(" Controller class : BusinessException occured and handled in addEmployee Method  ");
@@ -80,8 +79,30 @@ public class EmployeeController {
 	 */
 	@GetMapping("/allEmployees")
 	public ResponseEntity<List<Employee>> getAllEmployees() {
-		logger.info(" Controller class/getAllEmployees Method called 	:	Displaying all the Employee Details");
 		List<Employee> listOfEmployees = employeeServiceInterface.getAllEmployees();
+		logger.info(" Controller class/getAllEmployees Method called 	:	Displaying all the Employee Details");
+		return new ResponseEntity<List<Employee>>(listOfEmployees, HttpStatus.OK);
+	}
+	/*
+	 * Fetching ALl employees details present in DataBase It is mapped to
+	 * getAllEmployees method in employee service interface It will fetch a All
+	 * Employees detail present in Data Base
+	 */
+	@GetMapping("/activeEmployees")
+	public ResponseEntity<List<Employee>> getAllActiveEmployees() {
+		logger.info(" Controller class/getAllEmployees Method called 	:	Displaying all the Employee Details");
+		List<Employee> listOfEmployees = employeeServiceInterface.getAllActiveEmployees();
+		return new ResponseEntity<List<Employee>>(listOfEmployees, HttpStatus.OK);
+	}
+	/*
+	 * Fetching ALl employees details present in DataBase It is mapped to
+	 * getAllEmployees method in employee service interface It will fetch a All
+	 * Employees detail present in Data Base
+	 */
+	@GetMapping("/inActiveEmployees")
+	public ResponseEntity<List<Employee>> getAllInActiveEmployees() {
+		logger.info(" Controller class/getAllEmployees Method called 	:	Displaying all the Employee Details");
+		List<Employee> listOfEmployees = employeeServiceInterface.getAllInActiveEmployees();
 		return new ResponseEntity<List<Employee>>(listOfEmployees, HttpStatus.OK);
 	}
 
@@ -148,16 +169,61 @@ public class EmployeeController {
 	 * interface It will Delete that Employee Object from Data Base
 	 */
 
+	@PutMapping("/resign/{empId}")
+	public ResponseEntity<?> resignEmployeeById(@PathVariable("empId") Long empId) {
+		try {
+			
+			Employee deletedEmp = employeeServiceInterface.resign(empId);
+			logger.info(
+					" Controller Class/resignEmployeeById called : resign employee of  empId---------->	 " + empId);
+			return new ResponseEntity<String>(
+					"Employee Resigned Successfully: Employee Details = " + deletedEmp,
+					HttpStatus.ACCEPTED);
+		} catch (BusinessException e) {
+			logger.warn(
+					" Controller class/resignEmployeeById method called : BusinessException handled inside resignEmployeeById Method ");
+			ControllerException ce = new ControllerException(e.getErrorCode(), e.getErrorMessage());
+			return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			logger.warn(
+					" Controller class/resignEmployeeById method called : BusinessException handled inside resignEmployeeById Method ");
+			ControllerException ce = new ControllerException("EmployeeController-resignEmployeeById",
+					"Something went wrong on Controller");
+			return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
+		}
+	}
+	@PutMapping("/rejoin/{empId}")
+	public ResponseEntity<?> rejoinEmployeeById(@PathVariable("empId") Long empId) {
+		try {
+			
+			Employee deletedEmp = employeeServiceInterface.rejoin(empId);
+			logger.info(
+					" Controller Class/rejoinEmployeeById called : rejoin employee of  empId---------->	 " + empId);
+			return new ResponseEntity<String>(
+					"Employee Rejoin Successfully: Employee Details = " + deletedEmp,
+					HttpStatus.ACCEPTED);
+		} catch (BusinessException e) {
+			logger.warn(
+					" Controller class/rejoinEmployeeById method called : BusinessException handled inside resignEmployeeById Method ");
+			ControllerException ce = new ControllerException(e.getErrorCode(), e.getErrorMessage());
+			return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			logger.warn(
+					" Controller class/rejoinEmployeeById method called : BusinessException handled inside resignEmployeeById Method ");
+			ControllerException ce = new ControllerException("EmployeeController-resignEmployeeById",
+					"Something went wrong on Controller");
+			return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
+		}
+	}
 	@DeleteMapping("/delete/{empId}")
-
-	public ResponseEntity<?> deleteEmployeeById(@PathVariable("empId") Long empId) {
+	public ResponseEntity<?> deleteEmployee(@PathVariable("empId") Long empId) {
 		try {
 			logger.info(
 					" Controller Class/deleteEmployeeById called : Deleting employee of  empId---------->	 " + empId);
 			Employee deletedEmp = employeeServiceInterface.deleteEmployeeById(empId);
 
 			return new ResponseEntity<String>(
-					"Employee_Id is Successfully Deleted From the data Base   Deleted Details = " + deletedEmp,
+					"Employee Resigned Successfully: Employee Details = " + deletedEmp,
 					HttpStatus.ACCEPTED);
 		} catch (BusinessException e) {
 			logger.warn(
@@ -172,6 +238,7 @@ public class EmployeeController {
 			return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
 		}
 	}
+	
 
 	/*
 	 * Printing All the employee details in PDF
@@ -209,15 +276,17 @@ public class EmployeeController {
 	}
 
 	@Value("${project.images}")
+
+
 	private String path;
 
 	/*
 	 * Adding Photo to existing Employee
 	 */
-	@PostMapping("/upload/{empId}")
-	public ResponseEntity<?> fileUpload(@RequestParam("empId") Long empId, MultipartFile file) {
+	@PostMapping("/setProfilePicture/{empId}")
+	public ResponseEntity<?> setProfilePicture(@RequestParam("empId") Long empId, MultipartFile file) {
 		try {
-			String fileName = this.employeeServiceInterface.uploadPhoto(path, file, empId);
+			String fileName = this.employeeServiceInterface.setProfilePicture(path, file, empId);
 			logger.info("Controller class/fileUpload method called : Photo updated for empID----->	 " + empId);
 			return new ResponseEntity<>(new FileResponse(fileName, "Image Uploaded"), HttpStatus.CREATED);
 		} catch (Exception e) {
@@ -231,11 +300,11 @@ public class EmployeeController {
 	 * To View Photo
 	 */
 
-	@GetMapping(value = "/getImages/{empId}", produces = MediaType.IMAGE_JPEG_VALUE)
-	public void downloadImage(@PathVariable("empId") Long empId, HttpServletResponse response) throws IOException {
+	@GetMapping(value = "/getProfilePicture/{empId}", produces = MediaType.IMAGE_JPEG_VALUE)
+	public void getProfilePicture(@PathVariable("empId") Long empId, HttpServletResponse response) throws IOException {
 		logger.info("Controller class/getImages method called : Photo displaying for empID----->	 " + empId);
-		InputStream resource = this.employeeServiceInterface.getResource(path, empId);
-		// response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+		InputStream resource = this.employeeServiceInterface.getProfilePicture(path, empId);
+		response.setContentType(MediaType.IMAGE_JPEG_VALUE);
 		StreamUtils.copy(resource, response.getOutputStream());
 	}
 

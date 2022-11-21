@@ -15,16 +15,24 @@ import com.employeemanagement.entity.Employee;
 
 public interface EmployeeServiceInterface {
 
-	String uploadPhoto(String path, MultipartFile file,Long empId);
+	String setProfilePicture(String path, MultipartFile file,Long empId);
 
-	InputStream getResource(String path, Long empId);
+	InputStream getProfilePicture(String path, Long empId);
 	
 	Employee addEmployee(Employee employee);
-
+	
 	List<Employee> getAllEmployees();
+	
+	List<Employee> getAllActiveEmployees();
+	
+	List<Employee> getAllInActiveEmployees();
 
 	Employee getEmployeeById(Long empId);
 
+	Employee resign(Long empId);
+	
+	Employee rejoin(Long empId);
+	
 	Employee deleteEmployeeById(Long empId);
 
 	Employee updateEmployee(Long empId, Employee employee);
@@ -34,4 +42,6 @@ public interface EmployeeServiceInterface {
 	Employee getEmployeeByEmail(String email);
 	
 	Optional<Employee> findById(Long id);
+
+	
 }

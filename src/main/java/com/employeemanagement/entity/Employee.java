@@ -1,11 +1,14 @@
 package com.employeemanagement.entity;
 
+import java.util.Arrays;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
@@ -20,6 +23,7 @@ import lombok.Data;
  */
 @Schema
 @Entity
+
 public class Employee {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,6 +36,7 @@ public class Employee {
 	@Email 
 	private String email;
 	private Long phone;
+	private boolean active;
 //------------------------------------------------------------------------
 	@Lob
 	private  byte[] photo;
@@ -89,6 +94,14 @@ public class Employee {
 		this.email = email;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
 	public Long getPhone() {
 		return phone;
 	}
@@ -119,6 +132,13 @@ public class Employee {
 
 	public void setPhotoPath(String photoPath) {
 		this.photoPath = photoPath;
+	}
+
+	@Override
+	public String toString() {
+		return "Employee [empId=" + empId + ", ESTUATE_ID=" + ESTUATE_ID + ", firstName=" + firstName + ", lastName="
+				+ lastName + ", dateOfBirth=" + dateOfBirth + ", email=" + email + ", phone=" + phone + ", photo="
+				+ Arrays.toString(photo) + ", photoName=" + photoName + ", photoPath=" + photoPath + "]";
 	}
 
 	
