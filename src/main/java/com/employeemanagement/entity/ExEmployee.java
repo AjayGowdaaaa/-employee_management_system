@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema
 @Entity
-public class ExEmployees {
+public class ExEmployee {
 	@Id	
 	private Long empId;
 	private String ESTUATE_ID;

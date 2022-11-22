@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.employeemanagement.entity.Employee;
-import com.employeemanagement.entity.ExEmployees;
+import com.employeemanagement.entity.ExEmployee;
 import com.employeemanagement.entity.FileResponse;
 import com.employeemanagement.exception.BusinessException;
 import com.employeemanagement.exception.ControllerException;
@@ -78,7 +78,7 @@ public class EmployeeController {
 	public ResponseEntity<List<Employee>> getAllEmployees() {
 		List<Employee> listOfEmployees = employeeServiceInterface.getAllEmployees();
 		logger.info(" Controller class/getAllEmployees Method called 	:	Displaying all the Employee Details");
-		return new ResponseEntity<List<Employee>>(listOfEmployees, HttpStatus.FOUND);
+		return new ResponseEntity<List<Employee>>(listOfEmployees, HttpStatus.ACCEPTED);
 	}
 
 	/*
@@ -87,10 +87,10 @@ public class EmployeeController {
 	 * Employees detail present in Data Base
 	 */
 	@GetMapping("/allExEmployees")
-	public ResponseEntity<List<ExEmployees>> getAllExEmployees() {
-		List<ExEmployees> listOfEmployees = employeeServiceInterface.getAllExEmployees();
+	public ResponseEntity<List<ExEmployee>> getAllExEmployees() {
+		List<ExEmployee> listOfEmployees = employeeServiceInterface.getAllExEmployees();
 		logger.info(" Controller class/getAllExEmployees Method called 	:	Displaying all the Ex Employee Details");
-		return new ResponseEntity<List<ExEmployees>>(listOfEmployees, HttpStatus.FOUND);
+		return new ResponseEntity<List<ExEmployee>>(listOfEmployees, HttpStatus.ACCEPTED);
 	}
 	/*
 	 * Fetching one employee details by Using Id It is mapped to getEmployeeById
@@ -101,11 +101,9 @@ public class EmployeeController {
 	@GetMapping("/employeeById/{empId}")
 	public ResponseEntity<?> getEmployeeById(@PathVariable("empId") Long empId) {
 		try {
-			logger.info(
-					"Controller class/employeeById Method called 	:	Displaying the Employee Details of Employee ID ---->	"
-							+ empId);
+			logger.info("Controller class/employeeById Method called 	:	Displaying the Employee Details of Employee ID ---->	"+ empId);						
 			Employee employeeObtained = employeeServiceInterface.getEmployeeById(empId);
-			return new ResponseEntity<Employee>(employeeObtained, HttpStatus.FOUND);
+			return new ResponseEntity<Employee>(employeeObtained, HttpStatus.ACCEPTED);
 		} catch (BusinessException e) {
 			logger.warn(" Controller class/getEmployeeById method called : BusinessException handled inside getEmployeeById Method ");
 			ControllerException ce = new ControllerException(e.getErrorCode(), e.getErrorMessage());

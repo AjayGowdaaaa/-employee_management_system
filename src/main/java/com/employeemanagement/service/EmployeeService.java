@@ -10,22 +10,17 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.employeemanagement.entity.Employee;
-import com.employeemanagement.entity.ExEmployees;
+import com.employeemanagement.entity.ExEmployee;
 import com.employeemanagement.exception.BusinessException;
 import com.employeemanagement.repository.EmployeeRepository;
 import com.employeemanagement.repository.ExEmpRepo;
-
-
-
 
 @Service
 public class EmployeeService implements EmployeeServiceInterface {
@@ -37,8 +32,6 @@ public class EmployeeService implements EmployeeServiceInterface {
 	@Autowired
 	private ExEmpRepo exEmpRepo;
 	@Qualifier("exEmpRepo")
-
-	
 
 
 	// ---------------------ADD
@@ -109,8 +102,8 @@ public class EmployeeService implements EmployeeServiceInterface {
 	// ---------------------VIEW ALL Ex
 	// EMPLOYEE-----------------------------------------------------
 	@Override
-	public List<ExEmployees> getAllExEmployees() {
-		List<ExEmployees> empoyeeList = null;
+	public List<ExEmployee> getAllExEmployees() {
+		List<ExEmployee> empoyeeList = null;
 		try {
 			empoyeeList = exEmpRepo.findAll();
 			logger.info("EmployeeService : getAllEmployees : Getting all the employee details ");
@@ -196,7 +189,7 @@ public class EmployeeService implements EmployeeServiceInterface {
 		}
 
 		Employee deletingEmployee = employeeRepository.getById(empId);
-		ExEmployees emp = new ExEmployees();
+		ExEmployee emp = new ExEmployee();
 		try {
 			emp.setEmpId(deletingEmployee.getEmpId());
 			emp.setESTUATE_ID(deletingEmployee.getESTUATE_ID());
@@ -208,7 +201,7 @@ public class EmployeeService implements EmployeeServiceInterface {
 			emp.setPhoto(deletingEmployee.getPhoto());
 			emp.setPhotoName(deletingEmployee.getPhotoName());
 			emp.setPhotoPath(deletingEmployee.getPhotoPath());
-
+			
 			exEmpRepo.save(emp);
 			employeeRepository.delete(deletingEmployee);
 
@@ -232,10 +225,10 @@ public class EmployeeService implements EmployeeServiceInterface {
 			throw new BusinessException("EmployeeService-deleteEmployeeById-1",
 					" Employee ID Not found in DataBase, Please enter valid ID");
 		}
-		ExEmployees rejoiningEmp = exEmpRepo.getById(empId);
+		ExEmployee rejoiningEmp = exEmpRepo.getById(empId);
 		Employee emp = new Employee();
 		try {
-			emp.setEmpId(rejoiningEmp.getEmpId());
+			//emp.setEmpId(rejoiningEmp.getEmpId());
 			emp.setESTUATE_ID(rejoiningEmp.getESTUATE_ID());
 			emp.setFirstName(rejoiningEmp.getFirstName());
 			emp.setLastName(rejoiningEmp.getLastName());
@@ -245,8 +238,8 @@ public class EmployeeService implements EmployeeServiceInterface {
 			emp.setPhoto(rejoiningEmp.getPhoto());
 			emp.setPhotoName(rejoiningEmp.getPhotoName());
 			emp.setPhotoPath(rejoiningEmp.getPhotoPath());
-
-
+			employeeRepository.save(emp);
+			emp.setESTUATE_ID("EST-" + emp.getEmpId());
 			employeeRepository.save(emp);
 			exEmpRepo.delete(rejoiningEmp);
 			//logger.info("Inside the resign  method: resign ,Employee Id is sucessfully resign " + empId);

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.employeemanagement.entity.Employee;
-import com.employeemanagement.entity.ExEmployees;
+import com.employeemanagement.entity.ExEmployee;
 
 public interface EmployeeServiceInterface {
 
@@ -24,7 +24,7 @@ public interface EmployeeServiceInterface {
 	
 	List<Employee> getAllEmployees();
 	
-	List<ExEmployees> getAllExEmployees();
+	List<ExEmployee> getAllExEmployees();
 	
 	Employee getEmployeeById(Long empId);
 
