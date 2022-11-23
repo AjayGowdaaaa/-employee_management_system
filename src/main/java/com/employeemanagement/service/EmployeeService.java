@@ -10,17 +10,25 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.supercsv.io.CsvBeanWriter;
+import org.supercsv.io.ICsvBeanWriter;
+import org.supercsv.prefs.CsvPreference;
+
 import com.employeemanagement.entity.Employee;
 import com.employeemanagement.entity.ExEmployee;
 import com.employeemanagement.exception.BusinessException;
 import com.employeemanagement.repository.EmployeeRepository;
 import com.employeemanagement.repository.ExEmpRepo;
+import com.employeemanagement.util.EmployeeUtil;
 
 @Service
 public class EmployeeService implements EmployeeServiceInterface {
@@ -315,6 +323,7 @@ public class EmployeeService implements EmployeeServiceInterface {
 		if (emp == null) {
 			new BusinessException("Employee Id not found ", "Failed to setProfilePicture ");
 		}
+		
 		// File name
 		String fileName = emp.getFirstName()+count++;
 		// Full path
@@ -360,6 +369,7 @@ public class EmployeeService implements EmployeeServiceInterface {
 		}
 		String fullPath;
 		if (path== null) {
+			new BusinessException("Failed to getting Images", "Image not found/");
 		}
 		fullPath	= path + File.separator + emp.getPhotoName();
 		InputStream inputStream=null;
@@ -372,6 +382,22 @@ public class EmployeeService implements EmployeeServiceInterface {
 			e.printStackTrace();
 		}
 		return inputStream;
+	}
+	public void exportToCSV(HttpServletResponse response) throws IOException {
+		response.setContentType("text/csv");
+		String fileName = EmployeeUtil.generateFileName();
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; filename= "+fileName;
+		response.setHeader(headerKey, headerValue);
+		List<ExEmployee> listOfEmployees = getAllExEmployees();
+		ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(),CsvPreference.STANDARD_PREFERENCE);
+		String[] csvHeader= {"ID","Estuate ID","First Name","Last Name","DOB","E-mail","Phone Number","PHOTO"};
+		String[] nameMapping= {"empId","ESTUATE_ID","firstName","lastName","dateOfBirth","email","phone","photo"};
+		csvWriter.writeHeader(csvHeader);
+		for(ExEmployee exemp :listOfEmployees) {
+			csvWriter.write(exemp,nameMapping);
+		}
+		csvWriter.close();
 	}
 
 }

@@ -1,8 +1,12 @@
 package com.employeemanagement.service;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.web.multipart.MultipartFile;
 import com.employeemanagement.entity.Employee;
 import com.employeemanagement.entity.ExEmployee;
@@ -32,6 +36,7 @@ public interface EmployeeServiceInterface {
 	Optional<Employee> findById(Long id);
 
 	void rejoinEmployeeById(Long empId);
-
+	
+	 void exportToCSV(HttpServletResponse response) throws IOException;
 	
 }

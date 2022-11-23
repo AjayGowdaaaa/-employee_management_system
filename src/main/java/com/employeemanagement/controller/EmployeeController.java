@@ -29,9 +29,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.supercsv.io.CsvBeanWriter;
-import org.supercsv.io.ICsvBeanWriter;
-import org.supercsv.prefs.CsvPreference;
 import com.employeemanagement.entity.Employee;
 import com.employeemanagement.entity.ExEmployee;
 import com.employeemanagement.entity.FileResponse;
@@ -51,6 +48,8 @@ public class EmployeeController {
 	private EmployeeServiceInterface employeeServiceInterface;
 
 	Logger logger = LoggerFactory.getLogger(EmployeeController.class);
+	
+	 
 
 	/*
 	 * Through Register page we can add employee details and store  in Data Base
@@ -104,23 +103,8 @@ public class EmployeeController {
 	 */
 	@GetMapping("/exportToCSv")
 	public void exportToCSV(HttpServletResponse response) throws IOException {
-		response.setContentType("text/csv");
-		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-		String currentDateTime = dateFormatter.format(new Date());
-		String fileName="Archivelist" +currentDateTime +".csv";
-		String headerKey = "Content-Disposition";
-		String headerValue = "attachment; filename= "+fileName;
-		response.setHeader(headerKey, headerValue);
-		List<ExEmployee> listOfEmployees = employeeServiceInterface.getAllExEmployees();
-		ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(),CsvPreference.STANDARD_PREFERENCE);
-		String[] csvHeader= {"Employee ID","Estuate ID","First Name","Last Name","DOB","E-mail","Phone Number","PHOTO"};
-		String[] nameMapping= {"empId","ESTUATE_ID","firstName","lastName","dateOfBirth","email","phone","photo"};
-		csvWriter.writeHeader(csvHeader);
-		for(ExEmployee exemp :listOfEmployees) {
-			csvWriter.write(exemp,nameMapping);
-		}
+		employeeServiceInterface.exportToCSV(response);
 		logger.info("Controller class/exportToCSV : Exporting Archived List to CSV File");
-		csvWriter.close();
 	}
 
 	/*
