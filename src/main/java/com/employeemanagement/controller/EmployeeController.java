@@ -29,6 +29,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.supercsv.io.CsvBeanWriter;
+import org.supercsv.io.ICsvBeanWriter;
+import org.supercsv.prefs.CsvPreference;
+
 import com.employeemanagement.entity.Employee;
 import com.employeemanagement.entity.ExEmployee;
 import com.employeemanagement.entity.FileResponse;
@@ -91,6 +95,29 @@ public class EmployeeController {
 		List<ExEmployee> listOfEmployees = employeeServiceInterface.getAllExEmployees();
 		logger.info(" Controller class/getAllExEmployees Method called 	:	Displaying all the Ex Employee Details");
 		return new ResponseEntity<List<ExEmployee>>(listOfEmployees, HttpStatus.ACCEPTED);
+	}
+
+	@GetMapping("/exportToCSv")
+	public void getAllEmployeeAndExportingToCSV(HttpServletResponse response) throws IOException  {
+		response.setContentType("text/csv");
+		String fileName = "ExEmployeeList";
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; file name = "+ fileName;
+		response.setHeader(headerKey, headerValue);
+		List<ExEmployee> listOfEmployees = employeeServiceInterface.getAllExEmployees();
+
+		ICsvBeanWriter csvWriter = null;
+		csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
+		String [] csvHeader = {"ID","\tEST-ID","\tFirst Name","\tLast Name","\tDate of Birth","\tEmail ID","\tPhone"  };
+		String [] nameMapping = {"empId","ESTUATE_ID","firstName","lastName","dateOfBirth","email","phone"};
+		csvWriter.writeHeader(csvHeader);
+
+		for(ExEmployee emp : listOfEmployees) {
+			csvWriter.write(emp, nameMapping);
+
+		}csvWriter.close();
+
+
 	}
 	/*
 	 * Fetching one employee details by Using Id It is mapped to getEmployeeById
@@ -247,6 +274,6 @@ public class EmployeeController {
 
 	private String path;
 
-	
+
 
 }

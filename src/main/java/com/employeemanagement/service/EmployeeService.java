@@ -205,13 +205,13 @@ public class EmployeeService implements EmployeeServiceInterface {
 			exEmpRepo.save(emp);
 			employeeRepository.delete(deletingEmployee);
 
-			//logger.info("Inside the resign  method: resign ,Employee Id is sucessfully resign " + empId);
+			logger.info("Inside the resign  method: resign ,Employee Id is sucessfully resign " + empId);
 		} catch (NoSuchElementException e) {
-			//	logger.warn(" EmployeeService : NoSuchElementException handled inside deleteEmployee Method  ");
+				logger.warn(" EmployeeService : NoSuchElementException handled inside deleteEmployee Method  ");
 			throw new BusinessException("EmployeeService-updateEmployee-2",
 					"Employee ID Not found in DataBase, Please enter valid ID " + e.getMessage());
 		} catch (IllegalArgumentException e) {
-			//	logger.warn(" EmployeeService : IllegalArgumentException handled inside deleteEmployee Method  ");
+				logger.warn(" EmployeeService : IllegalArgumentException handled inside deleteEmployee Method  ");
 			throw new BusinessException("EmployeeService-updateEmployee-3",
 					"Something went wrong in service layer " + e.getMessage());
 		}
@@ -242,13 +242,13 @@ public class EmployeeService implements EmployeeServiceInterface {
 			emp.setESTUATE_ID("EST-" + emp.getEmpId());
 			employeeRepository.save(emp);
 			exEmpRepo.delete(rejoiningEmp);
-			//logger.info("Inside the resign  method: resign ,Employee Id is sucessfully resign " + empId);
+			logger.info("Inside the resign  method: resign ,Employee Id is sucessfully resign " + empId);
 		} catch (NoSuchElementException e) {
-			//	logger.warn(" EmployeeService : NoSuchElementException handled inside deleteEmployee Method  ");
+				logger.warn(" EmployeeService : NoSuchElementException handled inside deleteEmployee Method  ");
 			throw new BusinessException("EmployeeService-updateEmployee-2",
 					"Employee ID Not found in DataBase, Please enter valid ID " + e.getMessage());
 		} catch (IllegalArgumentException e) {
-			//	logger.warn(" EmployeeService : IllegalArgumentException handled inside deleteEmployee Method  ");
+				logger.warn(" EmployeeService : IllegalArgumentException handled inside deleteEmployee Method  ");
 			throw new BusinessException("EmployeeService-updateEmployee-3",
 					"Something went wrong in service layer " + e.getMessage());
 		}
@@ -297,6 +297,10 @@ public class EmployeeService implements EmployeeServiceInterface {
 	// -----------------------------------------------------
 	@Override
 	public Optional<Employee> findById(Long id) {
+	Employee emp=	employeeRepository.findById(id).get();
+		if (emp==null) {
+			throw new BusinessException("Find by Id ", "Employee ID not found in Database");
+		}
 		return employeeRepository.findById(id);
 	}
 
