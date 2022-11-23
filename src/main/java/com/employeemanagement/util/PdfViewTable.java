@@ -21,27 +21,6 @@ public class PdfViewTable {
 		this.employeeList = employeeList;
 	}
 
-//    public static void tableHeader(PdfPTable table){
-//        PdfPCell cell=new PdfPCell();
-//        cell.setBackgroundColor(Color.cyan);
-//        cell.setPadding(5);
-//        Font font = FontFactory.getFont(FontFactory.HELVETICA);
-//        font.setColor(Color.WHITE);
-//        cell.setPhrase(new Phrase("Emp. Id : ",font));
-//        table.addCell(cell);
-//        PdfPCell cell1=new PdfPCell();
-//        cell1.setPhrase(new Phrase("Name : ",font));
-//        table.addCell(cell1);
-//        PdfPCell cell2=new PdfPCell();
-//        cell2.setPhrase((new Phrase("DoB : ",font)));
-//        table.addCell(cell2);
-//        PdfPCell cell3=new PdfPCell();
-//        cell.setPhrase((new Phrase("Email : ",font)));
-//        table.addCell(cell3);
-//        PdfPCell cell4=new PdfPCell();
-//        cell4.setPhrase((new Phrase("Ph. No. : ",font)));
-//        table.addCell(cell4);
-//    }
 
 	public void writeTableHeader(PdfPTable table) {
 		PdfPCell cell = new PdfPCell();

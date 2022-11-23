@@ -60,7 +60,8 @@ public class PdfViewById {
 
     }
 
-    public void employeePdfDownloadById(Long empId, HttpServletResponse response) throws DocumentException, IOException {
+    @SuppressWarnings("unused")
+	public void employeePdfDownloadById(Long empId, HttpServletResponse response) throws DocumentException, IOException {
         Document document = new Document(PageSize.A4);
         PdfWriter.getInstance(document, response.getOutputStream());
 

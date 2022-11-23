@@ -188,7 +188,7 @@ public class EmployeeService implements EmployeeServiceInterface {
 					" Employee ID Not found in DataBase, Please enter valid ID");
 		}
 
-		Employee deletingEmployee = employeeRepository.getById(empId);
+		Employee deletingEmployee = employeeRepository.findById(empId).get();
 		ExEmployee emp = new ExEmployee();
 		try {
 			emp.setEmpId(deletingEmployee.getEmpId());
@@ -201,17 +201,17 @@ public class EmployeeService implements EmployeeServiceInterface {
 			emp.setPhoto(deletingEmployee.getPhoto());
 			emp.setPhotoName(deletingEmployee.getPhotoName());
 			emp.setPhotoPath(deletingEmployee.getPhotoPath());
-			
+
 			exEmpRepo.save(emp);
 			employeeRepository.delete(deletingEmployee);
 
 			logger.info("Inside the resign  method: resign ,Employee Id is sucessfully resign " + empId);
 		} catch (NoSuchElementException e) {
-				logger.warn(" EmployeeService : NoSuchElementException handled inside deleteEmployee Method  ");
+			logger.warn(" EmployeeService : NoSuchElementException handled inside deleteEmployee Method  ");
 			throw new BusinessException("EmployeeService-updateEmployee-2",
 					"Employee ID Not found in DataBase, Please enter valid ID " + e.getMessage());
 		} catch (IllegalArgumentException e) {
-				logger.warn(" EmployeeService : IllegalArgumentException handled inside deleteEmployee Method  ");
+			logger.warn(" EmployeeService : IllegalArgumentException handled inside deleteEmployee Method  ");
 			throw new BusinessException("EmployeeService-updateEmployee-3",
 					"Something went wrong in service layer " + e.getMessage());
 		}
@@ -225,10 +225,10 @@ public class EmployeeService implements EmployeeServiceInterface {
 			throw new BusinessException("EmployeeService-deleteEmployeeById-1",
 					" Employee ID Not found in DataBase, Please enter valid ID");
 		}
-		ExEmployee rejoiningEmp = exEmpRepo.getById(empId);
+		ExEmployee rejoiningEmp = exEmpRepo.findById(empId).get();
 		Employee emp = new Employee();
 		try {
-			//emp.setEmpId(rejoiningEmp.getEmpId());
+
 			emp.setESTUATE_ID(rejoiningEmp.getESTUATE_ID());
 			emp.setFirstName(rejoiningEmp.getFirstName());
 			emp.setLastName(rejoiningEmp.getLastName());
@@ -244,11 +244,11 @@ public class EmployeeService implements EmployeeServiceInterface {
 			exEmpRepo.delete(rejoiningEmp);
 			logger.info("Inside the resign  method: resign ,Employee Id is sucessfully resign " + empId);
 		} catch (NoSuchElementException e) {
-				logger.warn(" EmployeeService : NoSuchElementException handled inside deleteEmployee Method  ");
+			logger.warn(" EmployeeService : NoSuchElementException handled inside deleteEmployee Method  ");
 			throw new BusinessException("EmployeeService-updateEmployee-2",
 					"Employee ID Not found in DataBase, Please enter valid ID " + e.getMessage());
 		} catch (IllegalArgumentException e) {
-				logger.warn(" EmployeeService : IllegalArgumentException handled inside deleteEmployee Method  ");
+			logger.warn(" EmployeeService : IllegalArgumentException handled inside deleteEmployee Method  ");
 			throw new BusinessException("EmployeeService-updateEmployee-3",
 					"Something went wrong in service layer " + e.getMessage());
 		}
@@ -297,7 +297,7 @@ public class EmployeeService implements EmployeeServiceInterface {
 	// -----------------------------------------------------
 	@Override
 	public Optional<Employee> findById(Long id) {
-	Employee emp=	employeeRepository.findById(id).get();
+		Employee emp=	employeeRepository.findById(id).get();
 		if (emp==null) {
 			throw new BusinessException("Find by Id ", "Employee ID not found in Database");
 		}
@@ -306,16 +306,17 @@ public class EmployeeService implements EmployeeServiceInterface {
 
 	// ---------------------UPDATE PHOTO
 	// -----------------------------------------------------
+	int count=0;
 	@Override
 	public String setProfilePicture(String path, MultipartFile file, Long empId) {
 
-		Employee emp = employeeRepository.getById(empId);
+		Employee emp = employeeRepository.findById(empId).get();;
 
 		if (emp == null) {
-			new BusinessException("EMployee Id not found ", "Failed to ge employee Details");
+			new BusinessException("Employee Id not found ", "Failed to setProfilePicture ");
 		}
 		// File name
-		String fileName = emp.getFirstName();// + "_" + emp.getLastName() + "_" + file.getContentType();
+		String fileName = emp.getFirstName()+count++;
 		// Full path
 		String filePath = path + fileName;
 		// Setting path
@@ -353,31 +354,24 @@ public class EmployeeService implements EmployeeServiceInterface {
 	@Override
 
 	public InputStream getProfilePicture(String path, Long empId) {
-		Employee emp = employeeRepository.getById(empId);
+		Employee emp = employeeRepository.findById(empId).get();
 		if (!(employeeRepository.existsById(empId))) {
 			new BusinessException("Employee Id Not Found", "Please Enter Valid Id");
 		}
-
-
 		String fullPath;
 		if (path== null) {
-
 		}
 		fullPath	= path + File.separator + emp.getPhotoName();
-
-
-		InputStream is=null;
+		InputStream inputStream=null;
 		try {
 			// DataBase logic to return inputstream
 			logger.info("EmployeeService : View Photo : Displaying IMAGE ");
-			is = new FileInputStream(fullPath);
+			inputStream = new FileInputStream(fullPath);
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-
-		return is;
-
+		return inputStream;
 	}
 
 }

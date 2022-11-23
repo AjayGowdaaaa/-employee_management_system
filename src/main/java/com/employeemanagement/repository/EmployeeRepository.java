@@ -17,7 +17,4 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 	
 	Employee findByEmail(String email);
 	
-//	@Modifying
-//	@Query("update Employee e set e.firstName = ?1, e.lastName = ?2, e.dateOfBirth= ?3, e.email=?4, e.phone=?5,e.photoPath=?6, where e.empId = ?7")
-	//void setEmployeeInfoById(String firstName, String lastName, Date dateOfBirth,String email,Long phone, String photoPath, Long empId  );
 }

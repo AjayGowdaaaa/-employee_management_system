@@ -3,14 +3,7 @@ package com.employeemanagement.service;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
-
-import javax.print.DocFlavor.INPUT_STREAM;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.employeemanagement.entity.Employee;
 import com.employeemanagement.entity.ExEmployee;
 
